@@ -11,6 +11,10 @@ import re
 
 def helper():
     r = re.compile("^[0-9]*(?:\.[0-9]{0,4})?$")
+    if MassEntry.get() == "" or LumEntry.get() == "" or TempEntry.get() == "" or XEntry.get() == ""  or ZEntry.get() == "" or MaxPeriodEntry.get() == "" or MaxAmpEntry.get() == "":
+        ProgressBar.delete(1.0, END)
+        ProgressBar.insert(END, "Variables cannot be left blank")
+        return False
     if not (bool(r.match(MassEntry.get())) and bool(r.match(LumEntry.get())) and bool(r.match(TempEntry.get())) and
             bool(r.match(XEntry.get())) and bool(r.match(ZEntry.get())) and bool(r.match(MaxPeriodEntry.get())) and
             bool(r.match(MaxAmpEntry.get()))):
@@ -30,11 +34,15 @@ def helper():
 
 
 def linking():
-    name = "CC" if var.get() == "CC" else "RR"
+    name = var.get()
+    if name == "L":
+        ProgressBar.delete(1.0, END)
+        ProgressBar.insert(END, "A pulsar must be selected")
+        return None
     if helper():
         pulsar = Pulsar(float(MassEntry.get()), float(LumEntry.get()), float(XEntry.get()), float(ZEntry.get()), name,
                         float(MaxAmpEntry.get()), float(MaxPeriodEntry.get()), float(TempEntry.get()))
-        notification_message = "Successfully created a Cepheid" if name == "C" else "Successfully created an RR-Lyrae"
+        notification_message = "Successfully created a Cepheid" if name == "CC" else "Successfully created an RR-Lyrae"
         ProgressBar.delete(1.0, END)
         ProgressBar.insert(END, notification_message)
         return pulsar
